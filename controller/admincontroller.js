@@ -85,7 +85,15 @@ exports.deleteproperty = async (req, res) => {
 }
 exports.viewproperty = async (req, res) => {
      try {
-          let propertydata = await property.find()
+          // let propertydata = await property.find()
+          let propertyTypes = ["2BHK", "3BHK"]; // Add more property types as needed
+          let propertydata = await property.aggregate([
+               {
+                    $match:{
+                         propertytype: { $in: propertyTypes }
+                    }
+               }
+          ])
           res.json({ property: propertydata })
      } catch (error) {
           console.log(error);
