@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-mongoose.connect('mongodb+srv://dharmik:Dharmik5599@cluster0.cnfcnth.mongodb.net/property')
+mongoose.connect('mongodb://127.0.0.1/property')
 const db = mongoose.connection
 db.once('open',(err)=>{
      if(err){
