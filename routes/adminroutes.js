@@ -22,7 +22,7 @@ routes.post('/login',login)
 routes.post('/addproperty',admintoken,upload.array('files'),addproperty)
 routes.delete('/deleteproperty/:id',admintoken,deleteproperty)
 routes.get('/propertydata',viewproperty)
-routes.put('/updateproperty/:id',admintoken,upload.array('image'),updateproperty)
+routes.put('/updateproperty/:id',admintoken,upload.array('files'),updateproperty)
 
 
 
