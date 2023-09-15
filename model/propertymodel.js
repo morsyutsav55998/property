@@ -12,6 +12,5 @@ const propertySchema = new mongoose.Schema({
     files:{
         type: Array
     }
-
 });
 module.exports = mongoose.model('property', propertySchema);

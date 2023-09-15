@@ -16,27 +16,29 @@ exports.register = async (req, res) => {
      }
 }
 
-exports.login = async (req, res) =>{
+exports.login = async (req,res) =>{
 
      const { email, password } = req.body
     
-     if(email== null || password==null){
+     if(email== undefined || password==undefined){
+
           res.status(404).json({message:"please some field is required"});
           console.log(req.body)
+      
      }
+
      console.log(req.body)
 
      var data = await admin.findOne({ email });
 
      if (data == null) {
 
-          console.log("please register or enter valid email");
-          res.json({ message: "Plese register or enter valid email" });
+          // console.log("please register or enter valid email");
+           res.json({ message: "Plese register or enter valid email" })
 
      }
      else { 
-
-          if (data.password == password) {
+          if (data.password == password) { 
 
                var token = await jwt.sign({ id: data.id }, 'admin_data');
              
@@ -50,7 +52,7 @@ exports.login = async (req, res) =>{
           else {
                // console.log(req.body);
                res.json({ message: "Admin Login Password Failed" })
-               console.log("enter valid password");
+               console.log("enter valid password")
 
           }
      }
@@ -62,18 +64,16 @@ exports.addproperty = async (req, res) => {
 
      console.log(req.body);
      console.log(req.files);
-
      var { propertyname,propertytype,propertydetail} = req.body
-     var files = req.files
-     // var image = [];
-     // for (var file of files) {
-     //      image.push(imgpath + file.filename)
-     // }
-     // console.log(image);
-     // const admindata = await property.create(location,propertytype,contactdetail,image)
-     // if (admindata) {
-     //      res.json({ status: 200, message: "Property Inserted Successfully" })
-     // }
+     var files_ = req.files
+     var files = [];
+     for (var file of files_) {
+          files.push(imgpath + file.filename)
+     }
+     const admindata = await property.create(propertyname,propertytype,propertydetail,files)
+     if (admindata) {
+          res.json({ status: 200, message: "Property Inserted Successfully" })
+     }
 
 }
 

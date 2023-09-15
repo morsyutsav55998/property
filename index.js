@@ -7,6 +7,7 @@ const session = require('express-session')
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const mongoose = require('./config/mongoose')
+
 app.use(cookieParser())
 app.use(session({
     name : 'utsav garchar',
@@ -19,7 +20,7 @@ app.use(session({
 }))
 app.use(cors())
 app.use(morgan("dev"))
-app.use(express.urlencoded())
+app.use(express.urlencoded({extended:true}))
 
 
 app.use('/admin',require('./routes/adminroutes'))
