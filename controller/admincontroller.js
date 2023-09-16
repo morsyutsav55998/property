@@ -1,4 +1,6 @@
 const admin = require('../model/adminmodel')
+const sharp = require('sharp');
+const zlib = require('zlib');
 const jwt = require('jsonwebtoken')
 const path = require('path');
 const imgpath = '/images/'
@@ -43,19 +45,24 @@ exports.login = async (req, res) => {
 }
 
 // Property
-
 exports.addproperty = async (req, res) => {
      try {
-          var { propertyname, propertytype, propertydetail } = req.body
-          var files2 = req.files
-          var files = []
-          for (var file of files2) {
-               files.push(imgpath + file.filename)
+          const { propertyname, propertytype, propertydetail } = req.body;
+          const files2 = req.files;
+          const files = [];
+          for (const file of files2) {
+               const filePath = imgpath + file.filename;
+               const resizedFilePath = imgpath + 'resized-' + file.filename;
+               await sharp(file.path)
+                    .resize(800)
+                    .toFile(path.join(__dirname, '..', resizedFilePath));
+               fs.unlinkSync(file.path);
+               files.push(resizedFilePath);
           }
-          const admindata = await property.create({ propertyname, propertytype, propertydetail, files })
+          const admindata = await property.create({ propertyname, propertytype, propertydetail, files });
           console.log(admindata);
           if (admindata) {
-               res.json({ status: 200, message: "Property Inserted Successfully" })
+               res.json({ status: 200, message: "Property Inserted Successfully" });
           }
      } catch (error) {
           console.log(error);
@@ -89,7 +96,7 @@ exports.viewproperty = async (req, res) => {
           let propertyTypes = ["2BHK", "3BHK"]; // Add more property types as needed
           let propertydata = await property.aggregate([
                {
-                    $match:{
+                    $match: {
                          propertytype: { $in: propertyTypes }
                     }
                }
