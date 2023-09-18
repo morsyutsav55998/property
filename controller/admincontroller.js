@@ -51,10 +51,10 @@ exports.addproperty = async (req, res) => {
           const files2 = req.files;
           const files = [];
           for (const file of files2) {
-               const filePath = imgpath + file.filename;
+               // const filePath = imgpath + file.filename;
                const resizedFilePath = imgpath + 'resized-' + file.filename;
                await sharp(file.path)
-                    .resize(800)
+                    .jpeg({quality:20})
                     .toFile(path.join(__dirname, '..', resizedFilePath));
                fs.unlinkSync(file.path);
                files.push(resizedFilePath);
@@ -92,16 +92,17 @@ exports.deleteproperty = async (req, res) => {
 }
 exports.viewproperty = async (req, res) => {
      try {
-          // let propertydata = await property.find()
-          let propertyTypes = ["2BHK", "3BHK"]; // Add more property types as needed
-          let propertydata = await property.aggregate([
-               {
-                    $match: {
-                         propertytype: { $in: propertyTypes }
-                    }
-               }
-          ])
+          let propertydata = await property.find()
           res.json({ property: propertydata })
+          // let propertyTypes = ["2BHK", "3BHK"]; // Add more property types as needed
+          // let propertydata = await property.aggregate([
+          //      {
+          //           $match: {
+          //                propertytype: { $in: propertyTypes }
+          //           }
+          //      }
+          // ])
+          // res.json({ property: propertydata })
      } catch (error) {
           console.log(error);
      }
