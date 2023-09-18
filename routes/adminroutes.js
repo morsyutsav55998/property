@@ -21,7 +21,7 @@ routes.post('/login',login)
 // Property
 routes.post('/addproperty',admintoken,upload.array('files'),addproperty)
 routes.delete('/deleteproperty/:id',admintoken,deleteproperty)
-routes.get('/propertydata',viewproperty)
+routes.get('/propertydata',admintoken,viewproperty)
 routes.put('/updateproperty/:id',admintoken,upload.array('files'),updateproperty)
 
 

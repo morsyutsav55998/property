@@ -108,7 +108,6 @@ exports.viewproperty = async (req, res) => {
      }
 }
 exports.updateproperty = async (req, res) => {
-     console.log('hello');
      try {
           var { propertyname, propertytype, propertydetail } = req.body
           var files2 = req.files

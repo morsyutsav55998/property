@@ -8,7 +8,7 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const mongoose = require('./config/mongoose')
 
-app.use(cookieParser())
+// Session
 app.use(session({
     name : 'utsav garchar',
     secret : 'Coading',
@@ -18,13 +18,17 @@ app.use(session({
         maxAge : 200*100*200*1000,
     }
 }))
+
+// Function call
+app.use(cookieParser())
 app.use(cors())
 app.use(morgan("dev"))
 app.use(express.urlencoded({extended:true}))
 
-
+// Routes
 app.use('/admin',require('./routes/adminroutes'))
 
+// Server
 app.listen(port,(err)=>{
     if(err){
         console.log(err);
