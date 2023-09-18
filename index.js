@@ -10,12 +10,12 @@ const mongoose = require('./config/mongoose')
 
 // Session
 app.use(session({
-    name : 'utsav garchar',
-    secret : 'Coading',
-    resave : true,
-    saveUninitialized : false,
-    Cookie : {      
-        maxAge : 200*100*200*1000,
+    name: 'utsav garchar',
+    secret: 'Coading',
+    resave: true,
+    saveUninitialized: false,
+    Cookie: {
+        maxAge: 200 * 100 * 200 * 1000,
     }
 }))
 
@@ -23,16 +23,16 @@ app.use(session({
 app.use(cookieParser())
 app.use(cors())
 app.use(morgan("dev"))
-app.use(express.urlencoded({extended:true}))
+app.use(express.urlencoded({ extended: true }))
 
 // Routes
-app.use('/admin',require('./routes/adminroutes'))
+app.use('/admin', require('./routes/adminroutes'))
 
 // Server
-app.listen(port,(err)=>{
-    if(err){
+app.listen(port, (err) => {
+    if (err) {
         console.log(err);
         return false
     }
-    console.log("Server is running on port :",port);
+    console.log("Server is running on port :", port);
 })

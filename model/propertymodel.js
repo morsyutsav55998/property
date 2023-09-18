@@ -9,6 +9,9 @@ const propertySchema = new mongoose.Schema({
     propertydetail:{
         type: Object
     },
+    price:{
+        type:String,
+    },
     files:{
         type: Array
     }

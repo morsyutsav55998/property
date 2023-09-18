@@ -22,7 +22,6 @@ exports.login = async (req, res) => {
      const { email, password } = req.body
      if (email == undefined || password == undefined) {
           res.status(404).json({ message: "please some field is required" });
-          console.log(req.body)
      }
      var data = await admin.findOne({ email });
      if (data == null) {
@@ -47,20 +46,19 @@ exports.login = async (req, res) => {
 // Property
 exports.addproperty = async (req, res) => {
      try {
-          const { propertyname, propertytype, propertydetail } = req.body;
+          const { propertyname, propertytype, propertydetail, price } = req.body;
           const files2 = req.files;
           const files = [];
           for (const file of files2) {
                // const filePath = imgpath + file.filename;
                const resizedFilePath = imgpath + 'resized-' + file.filename;
                await sharp(file.path)
-                    .jpeg({quality:20})
+                    .jpeg({ quality: 20 })
                     .toFile(path.join(__dirname, '..', resizedFilePath));
                fs.unlinkSync(file.path);
                files.push(resizedFilePath);
           }
-          const admindata = await property.create({ propertyname, propertytype, propertydetail, files });
-          console.log(admindata);
+          const admindata = await property.create({ propertyname, propertytype, propertydetail, price, files });
           if (admindata) {
                res.json({ status: 200, message: "Property Inserted Successfully" });
           }
@@ -68,9 +66,7 @@ exports.addproperty = async (req, res) => {
           console.log(error);
      }
 }
-
 exports.deleteproperty = async (req, res) => {
-
      try {
           const propertyToDelete = await property.findById(req.params.id);
           if (propertyToDelete) {
@@ -106,27 +102,100 @@ exports.viewproperty = async (req, res) => {
      } catch (error) {
           console.log(error);
      }
+
 }
 exports.updateproperty = async (req, res) => {
      try {
-          var { propertyname, propertytype, propertydetail } = req.body
-          var files2 = req.files
+          const { propertyname, propertytype, propertydetail, price } = req.body;
+          const files2 = req.files;
           if (req.files) {
-               var propertyOlddata = await property.findById(req.params.id)
-               console.log(propertyOlddata, "ppppp");
-               for (var i = 0; i < propertyOlddata.files.length; i++) {
-                    var filePath = path.join(__dirname, '../' + propertyOlddata.files[i])
+               const propertyOlddata = await property.findById(req.params.id);
+               for (let i = 0; i < propertyOlddata.files.length; i++) {
+                    const filePath = path.join(__dirname, '../' + propertyOlddata.files[i]);
                     fs.unlinkSync(filePath);
                }
           }
-          var files = []
-          for (var file of files2) {
-               files.push(imgpath + file.filename)
+          const files = [];
+          for (const file of files2) {
+               const resizedFilePath = imgpath + 'resized-' + file.filename;
+               await sharp(file.path)
+                    .jpeg({ quality: 20 })
+                    .toFile(path.join(__dirname, '..', resizedFilePath));
+               fs.unlinkSync(file.path);
+               files.push(resizedFilePath);
           }
-          const updatedProperty = await property.findByIdAndUpdate(req.params.id, { propertyname, propertytype, propertydetail, files }, { new: true })
+          const updatedProperty = await property.findByIdAndUpdate(req.params.id, { propertyname, propertytype, propertydetail, price, files }, { new: true });
           if (updatedProperty) {
-               res.json({ status: 200, message: "Property Updated Successfully", Updated: updatedProperty })
+               res.json({ status: 200, message: "Property Updated Successfully", Updated: updatedProperty });
           }
+     } catch (error) {
+          console.log(error);
+          res.json({ status: 500, message: "An error occurred" });
+     }
+}
+
+// Filter
+
+exports.filter = async (req, res) => {
+     // console.log(req.body);
+     // const filterFields = req.body;
+
+     // // Convert string fields to float if they represent numeric values
+     // const numericFields = [
+     //      "search",
+     //      "propertyname",
+     //      "propertytype",
+     //      "propertydetail",
+     // ];
+     // numericFields.forEach((field) => {
+     //      if (filterFields[field]) {
+     //           filterFields[field] = parseFloat(filterFields[field]);
+     //      }
+     // });
+
+     // // Construct the query object based on non-empty fields in filterFields
+     // const query = {};
+     // Object.entries(filterFields).forEach(([key, value]) => {
+     //      if (value !== null && value !== undefined && value !== "") {
+     //           if (key === "search") {
+     //                query["price"] = { ...query["price"], $lte: value };
+     //           }
+     //           else if (key === "propertyname") {
+     //                query["price"] = { ...query["price"], $gte: value };
+     //           }
+     //           else if (key === "propertytype") {
+     //                query["price"] = { ...query["price"], $gte: value };
+     //           }
+     //           else if (key === "propertydetail") {
+     //                query["price"] = { ...query["price"], $gte: value };
+     //           }
+     //           else {
+     //                // Check if the value is an array
+     //                if (Array.isArray(value)) {
+     //                     // If the value is an array, create a $in query
+     //                     query[key] = { $in: value };
+     //                } else {
+     //                     // If the value is not an array, use a simple equality query
+     //                     query[key] = value;
+     //                }
+     //           }
+     //      }
+     // });
+
+     try {
+          const filterFields = req.body;
+          const query = {};
+          Object.entries(filterFields).forEach(([key, value]) => {
+               if (value !== null && value !== undefined && value !== "") {
+                    if (Array.isArray(value)) {
+                         query[key] = { $in: value };
+                    } else {
+                         query[key] = value;
+                    }
+               }
+          });
+          const propertydata = await property.find(query).collation({ locale: 'en', strength: 2 });
+          res.json({message:"Matched data :", propertydata });
      } catch (error) {
           console.log(error);
           res.json({ status: 500, message: "An error occurred" });
