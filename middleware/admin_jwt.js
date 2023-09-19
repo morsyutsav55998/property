@@ -23,6 +23,7 @@ const admin_token = async(req,res,next)=>{
                 console.log(data);
             }
             else{
+                req.admin=data
                 next()
             }
         }

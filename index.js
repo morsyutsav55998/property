@@ -27,6 +27,7 @@ app.use(express.urlencoded({ extended: true }))
 
 // Routes
 app.use('/admin', require('./routes/adminroutes'))
+app.use('/user', require('./routes/useroutes'))
 
 // Server
 app.listen(port, (err) => {
